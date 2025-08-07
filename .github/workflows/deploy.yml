@@ -7,6 +7,7 @@ on:
 
 env:
   IMAGE_TAG: latest
+  CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
 
 jobs:
   build-and-deploy:
@@ -41,10 +42,12 @@ jobs:
 
       - name: Update Kubeconfig
         run: aws eks update-kubeconfig --region $AWS_REGION --name $CLUSTER_NAME
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
 
       - name: Deploy to EKS
         run: kubectl apply -f k8s/deployment.yaml
 
       - name: Restart Deployment (to pull new image)
         run: kubectl rollout restart deployment flask-bedrock
-
