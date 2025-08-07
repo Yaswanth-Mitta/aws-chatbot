@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-bedrock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-bedrock
+  template:
+    metadata:
+      labels:
+        app: flask-bedrock
+    spec:
+      containers:
+        - name: flask-bedrock
+          image: 267092042432.dkr.ecr.us-east-2.amazonaws.com/flask-bedrock:latest
+          ports:
+            - containerPort: 6443
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-bedrock-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: flask-bedrock
+  ports:
+    - protocol: TCP
+      port: 6443
+      targetPort: 6443
+
